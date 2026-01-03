@@ -1,0 +1,15 @@
+{
+    "name": "ycode/kari",
+    "autoload": {
+        "psr-4": {
+            "Ycode\\Kari\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "4db444",
+            "email": "brahim77990alhyan@gmail.com"
+        }
+    ],
+    "require": {}
+}
