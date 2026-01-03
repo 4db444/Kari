@@ -1,12 +1,12 @@
 <?php
-    namespace Repositories\Interfaces\UserRepositoryInterface;
+    namespace Repositories\Interfaces;
 
-    require_once __DIR__ . "/../vendor/autoload.php";
+    require_once __DIR__ . "/../../vendor/autoload.php";
 
     use Entities\User;
 
     interface UserRepositoryInterface {
-        public static function Find(int $id) : ?User;
-        public static function FindByEmail(string $email) : ?User;
+        public function find(int $id) : ?User;
+        public function findByEmail(string $email) : ?User;
         public function save(User $user);
     }
