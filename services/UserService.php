@@ -11,7 +11,8 @@
             private UserRepositoryInterface $repo
         ){}
 
-        public function register (string $first_name, string $last_name, string $email, string $password) : array{
+        public function register (string $first_name, string $last_name, string $email, string $password) : array
+        {
             $errors = [];
 
             if ($this->repo->findByEmail($email)) $errors["email"] = "invalid email, email allready exists !";
@@ -37,8 +38,22 @@
             $this->repo->save($user);
 
             return [
+                "success" => true
+            ];
+        }
+
+        public function login (string $email, string $password) : array
+        {
+            $user = $this->repo->findByEmail($email);
+
+            if ($user && $user->verify_password($password)) return [
                 "success" => true,
                 "user" => $user
+            ];
+
+            return [
+                "success" => false,
+                "error" => "Wrong credentials !"
             ];
         }
     }
