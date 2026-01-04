@@ -2,7 +2,10 @@
     "name": "ycode/kari",
     "autoload": {
         "psr-4": {
-            "Ycode\\Kari\\": "src/"
+            "Core\\": "core/",
+            "Repositories\\": "repositories/",
+            "Services\\": "services/",
+            "Entities\\": "entities/"
         }
     },
     "authors": [
