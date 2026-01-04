@@ -21,4 +21,16 @@
                 $user["is_admin"]
             );
         }
+
+        public function set_id (int $id) {
+            if ($id > 0) $this->id = $id;
+        }
+
+        public function get_id (){
+            return $this->id;
+        }
+
+        public function get_password (){
+            return $this->password;
+        }
     }
