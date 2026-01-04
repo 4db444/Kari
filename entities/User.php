@@ -22,15 +22,20 @@
             );
         }
 
-        public function set_id (int $id) {
+        public function set_id (int $id) : void{
             if ($id > 0) $this->id = $id;
         }
 
-        public function get_id (){
+        public function get_id () : int{
             return $this->id;
         }
 
-        public function get_password (){
+        public function get_password () : string{
             return $this->password;
+        }
+
+        public function verify_password(string $password) : bool
+        {
+            return password_verify($password, $this->password);
         }
     }
