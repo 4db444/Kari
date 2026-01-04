@@ -37,7 +37,7 @@
 
         public function save(User $user){
             // new user
-            if ($user->id === 0){
+            if ($user->get_id() === 0){
                 $insert_statment = $this->pdo->prepare("
                     INSERT INTO users(first_name, last_name, email, password)
                     VALUES (:first_name, :last_name, :email, :password)
@@ -47,10 +47,10 @@
                     ":first_name" => $user->first_name,
                     ":last_name" => $user->last_name,
                     ":email" => $user->email,
-                    ":password" => password_hash($user->password, PASSWORD_DEFAULT),
+                    ":password" => $user->get_password(),
                 ]);
 
-                $user->id = $this->pdo->lastInsertId();
+                $user->set_id($this->pdo->lastInsertId());
             }
             // update user
             else {
@@ -64,7 +64,7 @@
                     ":first_name" => $user->first_name,
                     ":last_name" => $user->last_name,
                     ":email" => $user->email,
-                    ":password" => password_hash($user->password, PASSWORD_DEFAULT),
+                    ":password" => $user->get_password(),
                 ]);
             }
         }
