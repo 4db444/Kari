@@ -1,16 +1,14 @@
 <?php
-    namespace Core\Database;
+    namespace Core;
 
     use \PDO;
-
-    $db_config = require_once __DIR__ . "/../config/db.php";
 
     class Database {
         private static ?Database $instance = NULL;
         private static ?PDO $connection = NULL;
         private function __construct(){
             global $db_config;
-            self::$connection = new PDO("{$db_config['driver']}:host={$db_config['host']};dbname={$db_config['dbname']}", $db_config["user"], $db_config["password"]);
+            self::$connection = new PDO("mysql:host=localhost;dbname=kari", "root", "Brahim@444");
         }
 
         public static function get_instance(){
