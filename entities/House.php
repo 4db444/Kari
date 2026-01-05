@@ -11,10 +11,10 @@
             public int $room_number,
             public int $max_guests,
             public float $price,
-            private int $user_id
+            private ?int $user_id
         ){}
 
-        public static function HouseFromArray(array $house){
+        public static function HouseFromArray(array $house) : House{
             return new self(
                 $house["id"],
                 $house["city"],
@@ -26,11 +26,13 @@
             );
         }
 
-        public function get_id (){
+        public function get_id () : int{
             return $this->id;
         }
 
-        public function set_id (int $id){
+        public function set_id (int $id) : void{
             if ($id > 0) $this->id = $id;
         }
     }
+
+    echo House::class;
