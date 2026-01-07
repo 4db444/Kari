@@ -8,10 +8,11 @@
             private int $id,
             public string $city,
             public string $address,
-            public int $room_number,
+            public int $total_rooms,
             public int $max_guests,
             public float $price,
-            private ?int $user_id
+            public array $images,
+            private int $user_id
         ){}
 
         public static function HouseFromArray(array $house) : House{
@@ -19,9 +20,10 @@
                 $house["id"],
                 $house["city"],
                 $house["address"],
-                $house["room_number"],
+                $house["total_rooms"],
                 $house["max_guests"],
                 $house["price"],
+                $house["images"],
                 $house["user_id"],
             );
         }
@@ -33,6 +35,8 @@
         public function set_id (int $id) : void{
             if ($id > 0) $this->id = $id;
         }
-    }
 
-    echo House::class;
+        public function get_user_id () : int {
+            return $this->user_id;
+        }
+    }
