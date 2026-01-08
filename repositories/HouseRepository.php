@@ -97,6 +97,41 @@
             }
         }
 
+        public function getHouseByUser(int $user_id){
+            $houses_statment = $this->pdo->prepare("
+                SELECT *
+                FROM houses
+                WHERE user_id = :user_id
+            ");
+
+            $houses_statment->execute([
+                ":user_id" => $user_id
+            ]);
+
+            $houses = [];
+
+            while ($house_record = $houses_statment->fetch(PDO::FETCH_ASSOC)){
+                $images_statment = $this->pdo->prepare("
+                    SELECT src
+                    FROM images
+                    WHERE house_id = :house_id
+                ");
+
+                $images_statment->execute([
+                    ":house_id" => $house_record["id"]
+                ]);
+
+                $house_record["images"] = array_column(
+                    $images_statment->fetchAll(PDO::FETCH_ASSOC),
+                    "src"
+                );
+
+                $houses[] = House::HouseFromArray($house_record);
+            }
+
+            return $houses;
+        }
+
         public function destroy (int $house_id) {
             $delete_statment = $this->pdo->prepare("DELETE FROM houses WHERE id = :house_id");
 
