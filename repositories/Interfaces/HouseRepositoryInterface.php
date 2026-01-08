@@ -8,5 +8,6 @@
     interface HouserepositoryInterface {
         public function find(int $id) : ?House;
         public function save(House $house);
+        public function getHouseByUser(int $user_id);
         public function destroy(int $house_id);
     }
