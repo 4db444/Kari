@@ -1,3 +1,13 @@
+<?php
+    session_start();
+
+    if(isset($_SESSION["user"])) header("location: ./../houses.php");
+
+    $error = $_SESSION["error"] ?? [];
+    
+    unset($_SESSION["error"]);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +16,7 @@
     <title>Login | RentalApp</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gray-50 flex items-center justify-center min-h-screen">
 
@@ -20,7 +31,7 @@
             <p class="text-center text-gray-500 mt-2">Please enter your details to sign in</p>
         </div>
 
-        <form action="#" method="POST" class="p-8 space-y-5">
+        <form action="./../../controllers/auth/login.php" method="POST" class="p-8 space-y-5">
             <div>
                 <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
                 <div class="relative">
@@ -60,6 +71,27 @@
             </p>
         </div>
     </div>
+
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        <?php if (!empty($error)): ?>
+            Toast.fire({
+                icon: 'error',
+                title: '<?= $error ?>'
+            });
+        <?php endif; ?>
+    </script>
 
 </body>
 </html>

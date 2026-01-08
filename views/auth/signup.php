@@ -1,15 +1,26 @@
+<?php
+    session_start();
+
+    if(isset($_SESSION["user"])) header("location: ./../houses.php");
+
+    $errors = $_SESSION["errors"] ?? [];
+    
+    unset($_SESSION["errors"]);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up | RentalApp</title>
+    <title>Sign Up</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gray-50 flex items-center justify-center min-h-screen">
 
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 my-10">
         <div class="p-8 pb-0">
             <div class="flex items-center justify-center mb-6">
                 <div class="bg-rose-500 p-3 rounded-xl shadow-lg shadow-rose-200">
@@ -20,16 +31,30 @@
             <p class="text-center text-gray-500 mt-2">Join our community and start exploring!</p>
         </div>
 
-        <form action="#" method="POST" class="p-8 space-y-5">
-            <div>
-                <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                        <i class="fa-solid fa-user"></i>
-                    </span>
-                    <input type="text" id="name" name="name" required
-                        class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition duration-150"
-                        placeholder="John Doe">
+        <form action="./../../controllers/auth/signup.php" method="POST" class="p-8 space-y-5">
+            <div class="flex gap-2">
+                <div class="w-1/2">
+                    <label for="first_name" class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <input type="text" id="first_name" name="first_name" required
+                            class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition duration-150"
+                            placeholder="John">
+                    </div>
+                </div>
+    
+                <div class="w-1/2">
+                    <label for="last_name" class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <input type="text" id="last_name" name="last_name" required
+                            class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition duration-150"
+                            placeholder="Doe">
+                    </div>
                 </div>
             </div>
 
@@ -58,12 +83,12 @@
             </div>
 
             <div>
-                <label for="confirm-password" class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+                <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                         <i class="fa-solid fa-lock"></i>
                     </span>
-                    <input type="password" id="confirm-password" name="confirm-password" required
+                    <input type="password" id="password_confirmation" name="password_confirmation" required
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition duration-150"
                         placeholder="••••••••">
                 </div>
@@ -82,6 +107,29 @@
             </p>
         </div>
     </div>
+
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        <?php if (!empty($errors)): ?>
+            <?php foreach ($errors as $error): ?>
+                Toast.fire({
+                    icon: 'error',
+                    title: '<?= $error ?>'
+                });
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </script>
 
 </body>
 </html>
