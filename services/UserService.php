@@ -11,7 +11,7 @@
             private UserRepositoryInterface $repo
         ){}
 
-        public function register (string $first_name, string $last_name, string $email, string $password) : array
+        public function register (string $first_name, string $last_name, string $email, string $password, string $password_confirmation) : array
         {
             $errors = [];
 
@@ -20,6 +20,7 @@
             if (!$last_name) $errors["last_name"] = "invalid last name";
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors["email"] = "invalid email";
             if (strlen($password) < 8) $errors["password"] = "password must be at least 8 characters";
+            if ($password != $password_confirmation) $errors["password_confirmation"] = "password mismatch !";
 
             if ($errors) return[
                 "success" => false,
