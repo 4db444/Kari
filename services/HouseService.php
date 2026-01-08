@@ -64,6 +64,10 @@
             ];
         }
 
+        public function getMyHouses(int $user_id){
+            return $this->$house_repo->getHouseByUser($user_id);
+        }
+
         public function delete (User $user, House $house){
             if($user->is_admin || $house->get_user_id() === $user->get_id()){
                 $this->house_repo->destroy($house->get_id());

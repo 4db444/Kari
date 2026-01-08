@@ -56,11 +56,12 @@
             else {
                 $update_statment = $this->pdo->prepare("
                     UPDATE users
-                    set 
-                    SEt first_name = :first_name, last_name = :last_name, email = :email, password = :password)
+                    SEt first_name = :first_name, last_name = :last_name, email = :email, password = :password
+                    WHERE id = :id
                 ");
     
                 $update_statment->execute([
+                    ":id" => $user->get_id(),
                     ":first_name" => $user->first_name,
                     ":last_name" => $user->last_name,
                     ":email" => $user->email,
