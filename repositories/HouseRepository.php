@@ -28,28 +28,30 @@
                 ":house_id" => $house["id"]
             ]);
 
-            $house_images = $images_statment->fetchAll(PDO::FETCH_ASSOC);
+            $house_images = array_column($images_statment->fetchAll(PDO::FETCH_ASSOC), "src");
 
             $house["images"] = $house_images;
 
             return House::HouseFromArray($house);
         }
 
-        public function save (House $house) {
+        public function save (House $house, array $existing_images) {
             if ($house->get_id() === 0){
                 // new house
                 $insert_house_statment = $this->pdo->prepare ("
-                    INSERT INTO houses (city, address, total_rooms, max_guests, price, user_id)
-                    VALUES (:city, :address, :total_rooms, :max_guests, :price, :user_id)
+                    INSERT INTO houses (title, city, address, description, total_rooms, max_guests, price, owner)
+                    VALUES (:title, :city, :address, :description, :total_rooms, :max_guests, :price, :owner)
                 ");
 
                 $insert_house_statment->execute([
+                    ":title" => $house->title,
                     ":city" => $house->city,
                     ":address" => $house->address,
+                    ":description" => $house->description,
                     ":total_rooms" => $house->total_rooms,
                     ":max_guests" => $house->max_guests,
                     ":price" => $house->price,
-                    ":user_id" => $house->get_user_id(),
+                    ":owner" => $house->get_user_id(),
                 ]);
 
                 $house->set_id($this->pdo->lastInsertId());
@@ -59,39 +61,44 @@
 
                     $insert_img_statment->execute([
                         ":src" => $img,
-                        ":house_id" => $house->id
+                        ":house_id" => $house->get_id()
                     ]);
                 }
             }else {
                 // update existing house;
                 $update_statment = $this->pdo->prepare("
                     UPDATE houses
-                    SET city = :city, address = :address, total_rooms = :total_rooms, max_guests = :max_guests, price = :price
+                    SET title = :title, city = :city, address = :address, description = :description, total_rooms = :total_rooms, max_guests = :max_guests, price = :price
                     WHERE id = :id
                 ");
 
                 $update_statment->execute([
                     ":id" => $house->get_id(),
+                    ":title" => $house->title,
                     ":city" => $house->city,
                     ":address" => $house->address,
+                    ":description" => $house->description,
                     ":total_rooms" => $house->total_rooms,
                     ":max_guests" => $house->max_guests,
                     ":price" => $house->price
                 ]);
 
                 // delete all existing images :
-                $delete_images_statment = $this->pdo->prepare("DELETE FROM images WHERE house_id = :house_id");
-
-                $delete_images_statment->execute([
-                    ":house_id" => $house->get_id()
-                ]);
+                foreach($existing_images as $existing_image){
+                    $delete_image_statment = $this->pdo->prepare("DELETE FROM images WHERE house_id = :house_id AND src = :src");
+    
+                    $delete_image_statment->execute([
+                        ":house_id" => $house->get_id(),
+                        ":src" => $existing_image
+                    ]);
+                }
 
                 foreach ($house->images as $img){
                     $insert_img_statment = $this->pdo->prepare("INSERT INTO images(src, house_id) VALUES (:src, :house_id)");
 
                     $insert_img_statment->execute([
                         ":src" => $img,
-                        ":house_id" => $house->id
+                        ":house_id" => $house->get_id()
                     ]);
                 }
             }
@@ -101,11 +108,12 @@
             $houses_statment = $this->pdo->prepare("
                 SELECT *
                 FROM houses
-                WHERE user_id = :user_id
+                WHERE owner = :owner
+                ORDER BY id DESC
             ");
 
             $houses_statment->execute([
-                ":user_id" => $user_id
+                ":owner" => $user_id
             ]);
 
             $houses = [];
