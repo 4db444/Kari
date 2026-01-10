@@ -6,8 +6,8 @@
     class Database {
         private static ?Database $instance = NULL;
         private static ?PDO $connection = NULL;
+        
         private function __construct(){
-            global $db_config;
             self::$connection = new PDO("mysql:host=localhost;dbname=kari", "root", "Brahim@444");
         }
 
