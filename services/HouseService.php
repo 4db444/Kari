@@ -11,52 +11,34 @@
 
     class HouseService {
         public function __construct(
-            private HouseRpositoryInterface $house_repo,
+            private HouseRepositoryInterface $house_repo,
             private UserRepositoryInterface $user_repo
         ){}
 
-        public function create (
-            string $city,
-            string $address,
-            int $total_rooms,
-            int $max_guests,
-            float $price,
-            array $images,
-            int $user_id
-            ) : array
+        public function create (House $house, array $existing_images) : array
         {
             $errors = [];
 
-            if (!strlen($city)) $errors["city"] = "The City Is Required !";
-            if (!strlen($address)) $errors["address"] = "The Address Is Required !";
-            if ($total_rooms <= 0) $errors["total_rooms"] = "invalid total_rooms !";
-            if ($max_guests <= 0)$errors["max_guests"] = "Invalid max guests !";
-            if ($price <= 0) $errors["price"] = "Invalide price !";
+            if (!strlen($house->title)) $errors["title"] = "The Title Is Required !";
+            if (!strlen($house->city)) $errors["city"] = "The City Is Required !";
+            if (!strlen($house->address)) $errors["address"] = "The Address Is Required !";
+            if ($house->total_rooms <= 0) $errors["total_rooms"] = "invalid total_rooms !";
+            if ($house->max_guests <= 0)$errors["max_guests"] = "Invalid max guests !";
+            if ($house->price <= 0) $errors["price"] = "Invalide price !";
 
             if ($errors) return [
                 "success" => false,
                 "errors" => $errors
             ];
 
-            if (!$this->user_repo->find($user_id)) return [
+            if (!$this->user_repo->find($house->get_user_id())) return [
                 "success" => false,
                 "errors" => [
                     "user" => "Invalid user for association !"
                 ]
             ];
 
-            $house = new House(
-                0,
-                $city,
-                $address,
-                $total_rooms,
-                $max_guests,
-                $price,
-                $images,
-                $user_id
-            );
-
-            $this->house_repo->save($house);
+            $this->house_repo->save($house, $existing_images);
 
             return [
                 "success" => true,
@@ -64,8 +46,12 @@
             ];
         }
 
+        public function find (int $house_id) : ?House {
+            return $this->house_repo->find($house_id);
+        }
+
         public function getMyHouses(int $user_id){
-            return $this->$house_repo->getHouseByUser($user_id);
+            return $this->house_repo->getHouseByUser($user_id);
         }
 
         public function delete (User $user, House $house){
