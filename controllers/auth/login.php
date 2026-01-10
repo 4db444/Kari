@@ -17,7 +17,7 @@
 
     if ($result["success"]){
         $_SESSION["user"] = $result["user"];
-        header("location: ./../../views/houses.php");
+        header("location: ./../../views/house/houses.php");
     }else {
         $_SESSION["error"] = $result["error"];
         header("location: ./../../views/auth/login.php");
