@@ -6,8 +6,10 @@
     class House {
         public function __construct (
             private int $id,
+            public string $title,
             public string $city,
             public string $address,
+            public string $description,
             public int $total_rooms,
             public int $max_guests,
             public float $price,
@@ -18,13 +20,15 @@
         public static function HouseFromArray(array $house) : House{
             return new self(
                 $house["id"],
+                $house["title"],
                 $house["city"],
                 $house["address"],
+                $house["description"],
                 $house["total_rooms"],
                 $house["max_guests"],
                 $house["price"],
                 $house["images"],
-                $house["user_id"],
+                $house["owner"],
             );
         }
 
