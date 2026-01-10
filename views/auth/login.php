@@ -1,7 +1,7 @@
 <?php
     session_start();
 
-    if(isset($_SESSION["user"])) header("location: ./../houses.php");
+    if(isset($_SESSION["user"])) header("location: ./../house/houses.php");
 
     $error = $_SESSION["error"] ?? [];
     
