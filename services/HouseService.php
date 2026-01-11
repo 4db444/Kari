@@ -50,8 +50,16 @@
             return $this->house_repo->find($house_id);
         }
 
+        public function getOwner (int $house_id) : User {
+            return $this->house_repo->owner($house_id);
+        }
+
         public function getMyHouses(int $user_id){
             return $this->house_repo->getHouseByUser($user_id);
+        }
+
+        public function getAllHouses (int $user_id, int $page){
+            return $this->house_repo->getAllHouses($user_id, $page);
         }
 
         public function delete (User $user, House $house){
