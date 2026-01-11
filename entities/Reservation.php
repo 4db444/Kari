@@ -10,7 +10,7 @@
             private int $house_id,
             private string $from, 
             private string $to,
-            private bool $is_canceled,
+            private string $status,
             private ?int $rating
         ){}
 
@@ -18,8 +18,8 @@
             $this->id = $id;
         }
 
-        public function set_is_canceled(bool $status): void {
-            $this->is_canceled = $status;
+        public function set_status(string $status): void {
+            $this->status = $status;
         }
 
         public function get_user_id(): int { 
@@ -45,7 +45,7 @@
                 $reservation["house_id"],
                 $reservation["from"],
                 $reservation["to"],
-                $reservation["is_canceled"],
+                $reservation["status"],
                 NULL
             );
         }

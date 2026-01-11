@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS reservations(
     house_id INT NOT NULL,
     `from` DATE NOT NULL,
     `to` DATE NOT NULL,
-    is_canceled BOOLEAN NOT NULL DEFAULT 0,
+    status ENUM("pending", "confirmed", "completed", "canceled", "rejected") NOT NULL DEFAULT "pending",
     rating INT CHECK (rating >= 1 AND rating <= 5) DEFAULT NULL,
 
     FOREIGN KEY (user_id)

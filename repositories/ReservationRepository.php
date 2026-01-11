@@ -34,8 +34,8 @@
 
         public function save (Reservation $reservation){
             $insert_statment = $this->pdo->prepare("
-                INSERT INTO reservations (user_id, house_id, from, to, is_canceled)
-                VALUES (:user_id, :house_id, :from, :to, :is_canceled)
+                INSERT INTO reservations (user_id, house_id, from, to, status)
+                VALUES (:user_id, :house_id, :from, :to, :status)
             ");
 
             $insert_statment->execute([
@@ -43,7 +43,7 @@
                 ":house_id" => $reservation->get_house_id(),
                 ":from" => $reservation->get_from_date(),
                 ":to" => $reservation->get_to_date(),
-                ":is_canceled" => false
+                ":status" => false
             ]);
 
             $reservation->set_id($this->pdo->lastInsertId());
@@ -68,7 +68,7 @@
         public function cancel (Reservation $reservation){
             $cancel_statment = $this->pdo->prepare("
                 UPDATE reservations
-                SET is_canceled = 1
+                SET status = 'canceled'
                 WHERE id = :reservation_id
             ");
 
@@ -76,7 +76,7 @@
                 ":reservation_id" => $reservation->get_id()
             ]);
 
-            $reservation->set_is_canceled(true);
+            $reservation->set_is_canceled('canceled');
         }
 
         public function getReservationsByUser (int $user_id) : array{
