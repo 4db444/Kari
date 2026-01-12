@@ -23,11 +23,11 @@
         }
 
         public function get_user_id(): int { 
-            return $this->userId; 
+            return $this->user_id; 
         }
 
         public function get_house_id(): int {
-            return $this->houseId;
+            return $this->house_id;
         }
 
         public function get_from_date(): string {
