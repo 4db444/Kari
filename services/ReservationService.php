@@ -7,7 +7,8 @@
     use Repositories\Interfaces\UserRepositoryInterface;
     use Repositories\Interfaces\HouseRepositoryInterface;
 
-    use Entites\Reservation;
+    use Entities\Reservation;
+    use \DateTime;
 
     class ReservationService {
         public function __construct (
@@ -19,26 +20,39 @@
         public function book (int $user_id, int $house_id, string $start_date, string $end_date) :array {
             $errors = [];
 
+            if (!$start_date || !$end_date) return [
+                "success" => false,
+                "errors" => ["dates are required"]
+            ];
+            
             $start_date_obj = new DateTime($start_date);
             $end_date_obj = new DateTime($end_date);
 
-            if ($start_date_obj > $end_date_obj) $errors["dates"] = "invalide dates, start date must be less than end date";
+            if ($start_date_obj > $end_date_obj && $start_date_obj < (new DateTime())) return [
+                "success" => false,
+                "errors" => ["invalide dates, start date must be less than end date"]
+            ];
 
             $user = $this->user_repo->find($user_id);
 
-            if (!$user) $errors["user"] = "this user does not exists";
+            if (!$user) return [
+                "success" => false,
+                "errors" => ["this user does not exists"]
+            ];
 
             $house = $this->house_repo->find($house_id);
 
-            if (!$house) $errors["house"] = "this house is no longer exists";
+            if (!$house) return [
+                'success' => false,
+                "errors" => ["this house is no longer exists"]
+            ];
+
 
             $is_available = $this->reservation_repo->is_available($house->get_id(), $start_date, $end_date);
 
-            if (!$is_available) $errors["dates"] = "the house is not availabe in this interval !";
-
-            if ($errors) return [
+            if (!$is_available) return [
                 "success" => false,
-                "errors" => $errors
+                "errors" => ["the house is not availabe in this interval !"]
             ];
 
             $reservation = new Reservation(
