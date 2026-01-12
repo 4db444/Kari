@@ -1,10 +1,11 @@
 <?php
     namespace Repositories;
 
-    require_once "/../vendor/autoload.php";
+    require_once "./../../vendor/autoload.php";
 
     use Repositories\Interfaces\ReservationRepositoryInterface;
     use Entities\Reservation;
+    use \PDO;
 
     class ReservationRepository implements ReservationRepositoryInterface {
 
@@ -21,8 +22,6 @@
                 AND ((`to` BETWEEN :start_date AND :end_date) or (`from` BETWEEN :start_date AND :end_date))
             ");
 
-
-
             $check_availibility_statment->execute([
                 ":house_id" => $house_id,
                 ":start_date" => $start_date,
@@ -34,7 +33,7 @@
 
         public function save (Reservation $reservation){
             $insert_statment = $this->pdo->prepare("
-                INSERT INTO reservations (user_id, house_id, from, to, status)
+                INSERT INTO reservations (user_id, house_id, `from`, `to`, `status`)
                 VALUES (:user_id, :house_id, :from, :to, :status)
             ");
 
@@ -43,7 +42,7 @@
                 ":house_id" => $reservation->get_house_id(),
                 ":from" => $reservation->get_from_date(),
                 ":to" => $reservation->get_to_date(),
-                ":status" => false
+                ":status" => 'pending'
             ]);
 
             $reservation->set_id($this->pdo->lastInsertId());
@@ -88,6 +87,26 @@
 
             $statment->execute([
                 ":user_id" => $user_id
+            ]);
+
+            $reservations = [];
+
+            while ($reservation = $statment->fetch(PDO::FETCH_ASSOC)){
+                $reservations[] = Reservation::ReservationFromArray($reservation);
+            }
+
+            return $reservations;
+        }
+            
+        public function getReservationsByHouse (int $house_id) : array {
+            $statment = $this->pdo->prepare("
+                SELECT *
+                FROM reservations
+                WHERE house_id = :house_id AND status = 'confirmed' AND date_start >= CURRENT_DATE
+            ");
+
+            $statment->execute([
+                ":house_id" => $house_id
             ]);
 
             $reservations = [];
