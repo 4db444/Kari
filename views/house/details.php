@@ -8,14 +8,17 @@
     
     $houseId = $_GET["id"] ?? null; 
     if (!$houseId) header("location: " . BASE_URL. "/views/house/houses.php");
-
+    
     use Core\Database;
     use Services\HouseService;
     use Repositories\UserRepository;
     use Repositories\HouseRepository;
 
+    $errors = $_SESSION["errors"] ?? [];
+    unset($_SESSION["errors"]);
+    
     $HouseSvc = new HouseService(new HouseRepository(Database::get_instance()), new UserRepository(Database::get_instance()));
-
+    
     $house = $HouseSvc->find($houseId); 
     $owner = $HouseSvc->getOwner($houseId);
 ?>
@@ -30,9 +33,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* Flatpickr Custom Styling */
         .flatpickr-calendar { border-radius: 1rem !important; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important; border: 1px solid #f3f4f6 !important; }
         .flatpickr-day.selected { background: #f43f5e !important; border-color: #f43f5e !important; }
 
@@ -139,18 +142,18 @@
                         <div class="text-sm font-semibold underline text-gray-500">12 reviews</div>
                     </div>
 
-                    <form action="<?= BASE_URL ?>/controllers/bookings/create.php" method="POST" class="space-y-4">
+                    <form action="<?= BASE_URL ?>/controllers/booking/store.php" method="POST" class="space-y-4">
                         <input type="hidden" name="house_id" value="<?= $house->get_id() ?>">
                         
                         <div class="border border-gray-300 rounded-xl overflow-hidden">
                             <div class="grid grid-cols-2 border-b border-gray-300">
                                 <div class="p-3 border-r border-gray-300">
                                     <label class="block text-[10px] font-bold uppercase text-gray-900">Check-in</label>
-                                    <input type="text" id="checkin" name="checkin" placeholder="Add date" class="w-full text-sm outline-none bg-transparent">
+                                    <input required type="text" id="checkin" name="checkin" placeholder="Add date" class="w-full text-sm outline-none bg-transparent">
                                 </div>
                                 <div class="p-3">
                                     <label class="block text-[10px] font-bold uppercase text-gray-900">Check-out</label>
-                                    <input type="text" id="checkout" name="checkout" placeholder="Add date" class="w-full text-sm outline-none bg-transparent">
+                                    <input required type="text" id="checkout" name="checkout" placeholder="Add date" class="w-full text-sm outline-none bg-transparent">
                                 </div>
                             </div>
                             <div class="p-3">
@@ -180,7 +183,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Initialize Swiper Slider
             const swiper = new Swiper(".mySwiper", {
                 loop: true,
                 spaceBetween: 10,
@@ -197,7 +199,6 @@
                 },
             });
 
-            // 2. Initialize Flatpickr
             const checkinPicker = flatpickr("#checkin", {
                 altInput: true,
                 altFormat: "F j, Y",
@@ -213,6 +214,28 @@
                 altFormat: "F j, Y",
                 dateFormat: "Y-m-d",
                 minDate: "today"
+            });
+
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            const phpErrors = <?php echo json_encode(array_values($errors)); ?>;
+            
+            phpErrors.forEach((error, index) => {
+                Toast.fire({
+                    icon: 'error',
+                    title: error
+                });
             });
         });
     </script>
